@@ -1,12 +1,13 @@
 # rake_commit
 
- [![Gem Version](https://badge.fury.io/rb/rake_commit.png)](http://badge.fury.io/rb/rake_commit)
- [![Travis CI](http://travis-ci.org/pgr0ss/rake_commit.png)](http://travis-ci.org/pgr0ss/rake_commit)
+[![Gem Version](https://badge.fury.io/rb/rake_commit.png)](http://badge.fury.io/rb/rake_commit)
+[![Build Status](https://travis-ci.org/pgr0ss/rake_commit.png?branch=master)](https://travis-ci.org/pgr0ss/rake_commit)
 
 This gem automates a pretty standard workflow when committing code to git, svn, and git-svn.  Run rake_commit in  your current project, which does the following, depending on source control:
 
 ### git
 
+```
   1. Checks in current changes into a temp commit just in case
   2. Resets soft back to origin/branch (in order to collapse changes into one commit)
   3. Adds new files to git and removes deleted files
@@ -15,24 +16,29 @@ This gem automates a pretty standard workflow when committing code to git, svn, 
   6. Pulls changes from origin (and does a rebase to keep a linear history)
   7. Runs the default rake task (which should run the tests)
   8. Pushes the commit to origin
+```
 
 ### git-svn
 
+```
   1. Adds new files to git and removes deleted files
   2. Prompts for a commit message
   3. Commits to local git
   4. Pulls changes from SVN
   5. Runs the default rake task (which should run the tests)
   6. Pushes the commit to SVN
+```
 
 ### subversion
 
+```
   1. Prompts for a commit message
   2. Adds new files to subversion
   3. Deletes missing files from subversion
   4. svn update
   5. Runs the default rake task (which should run the tests)
   6. Checks in the code
+```
 
 
 The first version started with the code posted at Jay Field's Blog: [http://blog.jayfields.com/2006/12/ruby-rake-commit.html](http://blog.jayfields.com/2006/12/ruby-rake-commit.html).
@@ -75,7 +81,7 @@ This tells rake_commit not to prompt and make a new commit. This is useful when 
 --without-prompt <prompt>
 ```
 
-This will cause rake_commit to skip the named prompt. For example, if you are working by yourself and do not need to prompt for a pair, you can use `--without-prompt` pair.
+This will cause rake_commit to skip the named prompt. For example, if you are working by yourself and do not need to prompt for a pair, you can use `--without-prompt pair`.
 
 ## License
 
