@@ -1,10 +1,13 @@
+require 'tmpdir'
+
 module RakeCommit
   class Git
 
-    def initialize(collapse_commits = true, incremental = false, prompt_exclusions = [])
+    def initialize(collapse_commits = true, incremental = false, prompt_exclusions = [], background = false)
       @collapse_commits = collapse_commits
       @incremental = incremental
       @prompt_exclusions = prompt_exclusions
+      @background = background
     end
 
     def commit
@@ -12,9 +15,25 @@ module RakeCommit
         incremental_commit
       elsif rebase_in_progress?
         rebase_continue
-        RakeCommit::Shell.system("rake")
-        push
+        rake_and_push
       elsif @collapse_commits && collapse_git_commits? && collapse_git_commits
+        rake_and_push
+      end
+    end
+
+    def rake_and_push
+      if @background
+        begin
+          temp = Dir.mktmpdir()
+          RakeCommit::Shell.system("cp -r . #{temp}")
+          Dir.chdir(temp)
+          puts Dir.pwd
+          RakeCommit::Shell.system("rake")
+          push
+        ensure
+          RakeCommit::Shell.system("rm -rf #{temp}")
+        end
+      else
         RakeCommit::Shell.system("rake")
         push
       end

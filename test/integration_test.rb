@@ -65,6 +65,39 @@ class IntegrationTest < Test::Unit::TestCase
     end
   end
 
+  def test_rake_commit_backgrounds_rake
+    Dir.chdir(TMP_DIR) do
+      FileUtils.mkdir "git_repo"
+      Dir.chdir("git_repo") do
+        RakeCommit::Shell.system "echo 'task :default do; end' >> Rakefile"
+        create_git_repo
+      end
+
+      in_git_repo do
+        temp = Dir.pwd
+        RakeCommit::Shell.system "touch to_delete.rb"
+        RakeCommit::Shell.system "echo 'task :default do; File.delete(\"#{temp}/to_delete.rb\"); require_relative \"to_delete\"; end' >> Rakefile"
+
+        begin
+          RakeCommit::Shell.system "yes | ../../../bin/rake_commit -b"
+          fail
+        rescue => e
+        end
+
+        log_lines = RakeCommit::Shell.backtick("git log --pretty=oneline").split("\n")
+        puts log_lines
+        assert_equal 2, log_lines.size
+        assert_match /y - y/, log_lines.first
+
+        unpushed_sha = log_lines.first.gsub(/ .*/, "")
+
+        assert_not_equal "", RakeCommit::Shell.backtick("git cherry origin")
+        RakeCommit::Shell.backtick "git fetch"
+        assert_equal "", RakeCommit::Shell.backtick("git cherry origin")
+      end
+    end
+  end
+
   def test_with_nothing_to_commit_with_git
     Dir.chdir(TMP_DIR) do
       FileUtils.mkdir "git_repo"

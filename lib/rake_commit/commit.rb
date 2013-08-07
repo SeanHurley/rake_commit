@@ -29,7 +29,7 @@ module RakeCommit
       if git_svn?
         RakeCommit::GitSvn.new(options[:prompt_exclusions]).commit
       elsif git?
-        RakeCommit::Git.new(options[:collapse_commits], options[:incremental], options[:prompt_exclusions]).commit
+        RakeCommit::Git.new(options[:collapse_commits], options[:incremental], options[:prompt_exclusions], options[:background]).commit
       else
         RakeCommit::Svn.new(options[:prompt_exclusions]).commit
       end
@@ -50,6 +50,9 @@ module RakeCommit
         end
         opts.on("-w", "--without-prompt PROMPT", "Skips the given prompt (author, feature, message)") do |prompt_exclusion|
           options[:prompt_exclusions] << prompt_exclusion
+        end
+        opts.on("-b", "--background", "Copies the project into a temp directory to run rake and push") do |prompt_exclusion|
+          options[:background] = true
         end
       end
 
