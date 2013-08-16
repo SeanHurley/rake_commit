@@ -92,7 +92,7 @@ class IntegrationTest < Test::Unit::TestCase
         unpushed_sha = log_lines.first.gsub(/ .*/, "")
 
         assert_not_equal "", RakeCommit::Shell.backtick("git cherry origin")
-        RakeCommit::Shell.backtick "git fetch"
+        RakeCommit::Shell.system "git fetch"
         assert_equal "", RakeCommit::Shell.backtick("git cherry origin")
       end
     end
@@ -167,6 +167,8 @@ class IntegrationTest < Test::Unit::TestCase
         assert_match /Merge branch 'br'/, log_lines[0]
         assert_match /commit on branch/, log_lines[1]
         assert_match /Added Rakefile/, log_lines[2]
+        RakeCommit::Shell.system "git fetch"
+        assert_equal "", RakeCommit::Shell.backtick("git cherry origin")
       end
     end
   end

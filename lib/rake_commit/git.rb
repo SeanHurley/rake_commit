@@ -16,12 +16,14 @@ module RakeCommit
       elsif rebase_in_progress?
         rebase_continue
         rake_and_push
-      elsif @collapse_commits && collapse_git_commits? && collapse_git_commits
+      else
+        @collapse_commits && collapse_git_commits? && collapse_git_commits
         rake_and_push
       end
     end
 
     def rake_and_push
+      pull_rebase rescue return false if @collapse_commits
       if @background
         begin
           temp = Dir.mktmpdir()
